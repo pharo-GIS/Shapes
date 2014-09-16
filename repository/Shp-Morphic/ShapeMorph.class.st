@@ -148,7 +148,7 @@ ShapeMorph class >> test4 [
 ShapeMorph >> arcColor: aColor [
 	"set Shape-specific arc color" 
 
-	arcColor _ aColor
+	arcColor := aColor
 ]
 
 { #category : #converting }
@@ -357,15 +357,15 @@ ShapeMorph >> drawEmbeddedOn: aCanvas [
 ShapeMorph >> drawIsolatedOn: aCanvas [ 
 	"drawing when receiver is not embedded in a ShapeGISMorph"
 	| canvas geoBB scaling m multiplier xMin yMax extent rect |
-	canvas _ aCanvas asBalloonCanvas.
-	extent _ self extent.
+	canvas := aCanvas asBalloonCanvas.
+	extent := self extent.
 	canvas aaLevel: 4.
 	"use shapemap's boundingBox"
-	geoBB _ shapeMap boundingBox.
-	xMin _ geoBB origin x.
-	yMax _ geoBB corner y.
+	geoBB := shapeMap boundingBox.
+	xMin := geoBB origin x.
+	yMax := geoBB corner y.
 	"map the whole shapeMap on the given extent"
-	scaling _ extent x / geoBB extent x min: extent y / geoBB extent y.
+	scaling := extent x / geoBB extent x min: extent y / geoBB extent y.
 	"NOTE: for shapes where decimals values of the coordinates matter (small
 	scale, eg hundreds), the result will be too coarse, due to truncation of 
 	floating point values being done before scaling. Simple solution is 
@@ -373,29 +373,29 @@ ShapeMorph >> drawIsolatedOn: aCanvas [
 	by 1000.0"
 	"calculate the transform"
 	scaling > 1.0
-		ifTrue: [multiplier _ 1000.0.
-			m _ MatrixTransform2x3 withScale: 1 @ -1 * scaling / multiplier]
-		ifFalse: [multiplier _ 1.0.
-			m _ MatrixTransform2x3 withScale: 1 @ -1 * scaling].
+		ifTrue: [multiplier := 1000.0.
+			m := MatrixTransform2x3 withScale: 1 @ -1 * scaling / multiplier]
+		ifFalse: [multiplier := 1.0.
+			m := MatrixTransform2x3 withScale: 1 @ -1 * scaling].
 	m offset: xMin negated @ yMax * scaling + self innerBounds origin.
 	canvas transformBy: m.
 	"finally, the drawing-on-canvas code; slightly different depending on
 	shapeMap type"
 	shapeMap hasPolygons
 		ifTrue: [polygonColor isNil
-				ifTrue: [polygonColor _ shapeMap polygonColor alpha: 0.5].
+				ifTrue: [polygonColor := shapeMap polygonColor alpha: 0.5].
 			arcColor isNil
-				ifTrue: [arcColor _ shapeMap arcColor].
+				ifTrue: [arcColor := shapeMap arcColor].
 			1
 				to: shapeMap numberOfShapes
 				do: [:i | 
 					| contours | 
-					contours _ shapeMap vertices2DByPartsForShapeIndex: i.
+					contours := shapeMap vertices2DByPartsForShapeIndex: i.
 					scaling > 1.0
-						ifTrue: [contours _ contours
+						ifTrue: [contours := contours
 										collect: [:each | each
 												collect: [:point | point * multiplier]]].
-					legend isNil ifFalse: [polygonColor _ legend colorFor: ((data at: i) at: coloringAttrIndex)].
+					legend isNil ifFalse: [polygonColor := legend colorFor: ((data at: i) at: coloringAttrIndex)].
 					canvas
 						drawGeneralPolygon: contours
 						color: polygonColor
@@ -404,17 +404,17 @@ ShapeMorph >> drawIsolatedOn: aCanvas [
 	"+++++++++++ line shapes ++++++++++++++++++++++++"
 	shapeMap hasLines
 		ifTrue: [arcColor isNil
-				ifTrue: [arcColor _ shapeMap arcColor].
+				ifTrue: [arcColor := shapeMap arcColor].
 			1
 				to: shapeMap numberOfShapes
 				do: [:i | 
 					| contours | 
-					contours _ shapeMap vertices2DByPartsForShapeIndex: i.
+					contours := shapeMap vertices2DByPartsForShapeIndex: i.
 					scaling > 1.0
-						ifTrue: [contours _ contours
+						ifTrue: [contours := contours
 										collect: [:each | each
 												collect: [:point | point * multiplier]]].
-					legend isNil ifFalse: [arcColor _ legend colorFor: ((data at: i) at: coloringAttrIndex)].
+					legend isNil ifFalse: [arcColor := legend colorFor: ((data at: i) at: coloringAttrIndex)].
 					canvas
 						drawGeneralPolygon: contours
 						color: nil
@@ -422,18 +422,18 @@ ShapeMorph >> drawIsolatedOn: aCanvas [
 						borderColor: arcColor]].
 	"+++++++++++ point shapes ++++++++++++++++++++++++"
 	shapeMap hasPoints
-		ifTrue: [pointColor isNil ifTrue: [pointColor _ shapeMap pointColor].
-			rect _ (Rectangle origin: -1.0 @ -1.0 corner: 1.0 @ 1.0)
+		ifTrue: [pointColor isNil ifTrue: [pointColor := shapeMap pointColor].
+			rect := (Rectangle origin: -1.0 @ -1.0 corner: 1.0 @ 1.0)
 						scaleBy: (10 raisedToInteger: (1.0 / (scaling / multiplier) max: 1.0) log truncated).
 			shapeMap hasMultiPoints
 				ifTrue: [1
 						to: shapeMap numberOfShapes
 						do: [:i | 
 							| points | 
-							points _ self multiPointsFromShapeIndex: i.
-							legend isNil ifFalse: [pointColor _ legend colorFor: ((data at: i) at: coloringAttrIndex)].
+							points := self multiPointsFromShapeIndex: i.
+							legend isNil ifFalse: [pointColor := legend colorFor: ((data at: i) at: coloringAttrIndex)].
 							scaling > 1.0
-								ifTrue: [points _ points
+								ifTrue: [points := points
 												collect: [:each | each * multiplier].
 									points
 										do: [:point | canvas
@@ -445,10 +445,10 @@ ShapeMorph >> drawIsolatedOn: aCanvas [
 						to: shapeMap numberOfShapes
 						do: [:i | 
 							| point | 
-							point _ shapeMap point2DFromShapeIndex: i.
+							point := shapeMap point2DFromShapeIndex: i.
 							scaling > 1.0
-								ifTrue: [point _ point * multiplier].
-							legend isNil ifFalse: [pointColor _ legend colorFor: ((data at: i) at: coloringAttrIndex)].
+								ifTrue: [point := point * multiplier].
+							legend isNil ifFalse: [pointColor := legend colorFor: ((data at: i) at: coloringAttrIndex)].
 							canvas
 								drawRectangle: (rect translateBy: point)
 								color: pointColor
@@ -500,14 +500,14 @@ ShapeMorph >> legend: aColorLegend [
 ShapeMorph >> pointColor: aColor [
 	"set Shape-specific point color" 
 
-	pointColor _ aColor
+	pointColor := aColor
 ]
 
 { #category : #'accessing - coloring' }
 ShapeMorph >> polygonColor: aColor [
 	"set Shape-specific polygon color" 
 
-	polygonColor _ aColor
+	polygonColor := aColor
 ]
 
 { #category : #'editable polygons' }
@@ -575,10 +575,10 @@ ShapeMorph >> shapesWithAttributesSatisfying: aBlock [
 	"self shapesWithAttributeSatisfying: [:attrs | (attrs at: 6) = 312] "
 
 	| shapes attributes bBoxes indices |
-	shapes _ OrderedCollection new: 100.
-	attributes _ OrderedCollection new: 100.
-	bBoxes _ OrderedCollection new: 100.
-	indices _ OrderedCollection new: 100.
+	shapes := OrderedCollection new: 100.
+	attributes := OrderedCollection new: 100.
+	bBoxes := OrderedCollection new: 100.
+	indices := OrderedCollection new: 100.
 	1
 		to: shapeMap numberOfShapes
 		do: [:i | (aBlock

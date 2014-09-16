@@ -1,17 +1,24 @@
 "
-Main comment stating the purpose of this class and relevant relationship to other classes.
+ColorLegendMorph onLegend: EconetLevelSpec legendLevel3a.
 
-self onLegend: EconetLevelSpec legendLevel3a
+Instance Variables
+	items:		<Object>
+	labels:		<Object>
+	legend:		<Object>
 
-Structure:
- instVar1		type -- comment about the purpose of instVar1
- instVar2		type -- comment about the purpose of instVar2
+items
+	- xxxxx
 
-Any further useful comments about the general approach of this implementation.
+labels
+	- xxxxx
+
+legend
+	- xxxxx
+
 "
 Class {
 	#name : #ColorLegendMorph,
-	#superclass : #RectangleMorph,
+	#superclass : #Morph,
 	#instVars : [
 		'legend',
 		'items',

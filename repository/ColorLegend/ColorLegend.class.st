@@ -524,16 +524,15 @@ ColorLegend >> source: aColorSource [
 
 { #category : #storage }
 ColorLegend >> storeOnFile [
-	"Save the instance in a file. Ask the user for a file name"
+	" Save the instance in a file. Ask the user for a file name "
 
-	| fname refStream |
+	| fname |
 	block isNil ifFalse: [^self error: 'can''t store a BlockContext in a ReferenceStream'].
 	fname := UIManager default request: 'Name for ColorLegend?'.
 	fname isEmptyOrNil
 		ifTrue: [^ self].
 	(fname asLowercase endsWith: '.colorlegend')
 		ifFalse: [fname := fname , '.colorLegend'].
-	refStream := ReferenceStream fileNamed: fname.
-	refStream nextPut: self.
-	refStream close
+	FLSerializer serialize: self toFileNamed: fname.
+
 ]

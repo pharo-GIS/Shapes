@@ -208,6 +208,19 @@ ShapeEnsemble >> drawOn: aCanvas [
 	shape drawOn: aCanvas
 ]
 
+{ #category : #accessing }
+ShapeEnsemble >> gtInspectorMorphIn: composite [
+	<gtInspectorPresentationOrder: 90>  
+	| morphPresentation |
+	morphPresentation := composite morph.
+	morphPresentation 
+		title: 'View';
+		display: [ :each |
+			ImageMorph new image: self asForm];
+		act: [ :pres | self exportAsPNG ] entitled: 'Export as PNG';
+		act: [ :pres | self delete ] entitled: 'Delete'
+]
+
 { #category : #'accessing - legend' }
 ShapeEnsemble >> legend: aLegend [
 	"use a predefined legend"

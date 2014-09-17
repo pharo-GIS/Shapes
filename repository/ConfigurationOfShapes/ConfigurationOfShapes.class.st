@@ -125,6 +125,27 @@ ConfigurationOfShapes >> baseline01: spec [
 
 ]
 
+{ #category : #baselines }
+ConfigurationOfShapes >> baseline02: spec [
+	<version: '0.2-baseline'>
+
+	spec for: #'common' do: [
+		spec blessing: #'baseline'.
+		spec repository: 'http://smalltalkhub.com/mc/hernan/Shapes/main/'.
+		spec project: 'XBase' with: [
+				spec
+					className: #ConfigurationOfXBase;
+					versionString: #'stable';
+					repository: 'http://smalltalkhub.com/mc/hernan/XBase/main/' ].
+		spec 
+			package: 'Shapes' with: [
+				spec requires: #('XBase' 'ColorLegend' ). ];
+			package: 'ColorLegend';
+			package: 'Shp-Morphic' with: [
+				spec requires: #('ColorLegend' 'Shapes' ). ]. ].
+
+]
+
 { #category : #accessing }
 ConfigurationOfShapes >> customProjectAttributes [
 	 "Edit to return a collection of any custom attributes e.g. for conditional loading: Array with: #'Condition1' with: #'Condition2.
@@ -137,7 +158,7 @@ ConfigurationOfShapes >> customProjectAttributes [
 ConfigurationOfShapes >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '0.1-baseline'.
+	spec for: #'common' version: '0.2-baseline'.
 
 ]
 
@@ -158,7 +179,7 @@ ConfigurationOfShapes >> project [
 ConfigurationOfShapes >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.0'.
+	spec for: #'common' version: '1.1'.
 
 ]
 
@@ -173,5 +194,22 @@ ConfigurationOfShapes >> version10: spec [
 		spec timestamp: '9/17/2014 00:57'.
 		spec project: 'XBase' with: '1.0'.
 		spec package: 'Shapes' with: 'Shapes-HernanMoralesDurand.73'. ].
+
+]
+
+{ #category : #versions }
+ConfigurationOfShapes >> version11: spec [
+	<version: '1.1' imports: #('0.2-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 1.1'.
+		spec author: 'HernanMoralesDurand'.
+		spec timestamp: '9/17/2014 01:01'.
+		spec project: 'XBase' with: '1.0'.
+		spec 
+			package: 'Shapes' with: 'Shapes-HernanMoralesDurand.73';
+			package: 'ColorLegend' with: 'ColorLegend-HernanMoralesDurand.17';
+			package: 'Shp-Morphic' with: 'Shp-Morphic-HernanMoralesDurand.7'. ].
 
 ]

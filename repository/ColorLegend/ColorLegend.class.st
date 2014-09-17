@@ -224,18 +224,14 @@ ColorLegend class >> fromFile: aString [
 	"load"
 	"self fromFile: 'corineLU.colorLegend' "
 
-	| fname refStream instance |
+	| fname  |
 	fname := aString.
 	fname isEmptyOrNil
 		ifTrue: [^ self new].
 	(fname asLowercase endsWith: '.colorlegend')
-		ifFalse: [fname := fname , '.colorLegend'].
-	refStream := ReferenceStream fileNamed: fname.
-	refStream atEnd
-		ifTrue: [instance := self new]
-		ifFalse: [instance := refStream next].
-	refStream close.
-	^ instance
+		ifFalse: [ fname := fname , '.colorLegend'].
+	^ FLMaterializer materializeFromFileNamed: fname
+
 ]
 
 { #category : #'instance creation' }

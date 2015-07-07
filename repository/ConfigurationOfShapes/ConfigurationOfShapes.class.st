@@ -180,6 +180,7 @@ ConfigurationOfShapes >> stable: spec [
 	<symbolicVersion: #'stable'>
 
 	spec for: #'common' version: '1.1'.
+	spec for: #'pharo4.x' version: '1.2'
 
 ]
 
@@ -210,6 +211,23 @@ ConfigurationOfShapes >> version11: spec [
 		spec 
 			package: 'Shapes' with: 'Shapes-HernanMoralesDurand.73';
 			package: 'ColorLegend' with: 'ColorLegend-HernanMoralesDurand.17';
+			package: 'Shp-Morphic' with: 'Shp-Morphic-HernanMoralesDurand.7'. ].
+
+]
+
+{ #category : #versions }
+ConfigurationOfShapes >> version12: spec [
+	<version: '1.2' imports: #('0.2-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 1.1'.
+		spec author: 'HernanMoralesDurand'.
+		spec timestamp: '7/6/2015 01:01'.
+		spec project: 'XBase' with: '1.0'.
+		spec 
+			package: 'Shapes' with: 'Shapes-SergeStinckwich.74';
+			package: 'ColorLegend' with: 'ColorLegend-HernanMoralesDurand.18';
 			package: 'Shp-Morphic' with: 'Shp-Morphic-HernanMoralesDurand.7'. ].
 
 ]

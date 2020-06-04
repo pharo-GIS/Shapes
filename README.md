@@ -1,6 +1,6 @@
 # Description
 
-Smalltalk package to read and view GIS data in ESRI shapefile format
+Smalltalk package to read and view GIS data in ESRI Shapefile format, [originally written](http://www.squeaksource.com/shapes.html) by Hans Baveco and forked to work with Pharo. 
 
 # Installation
 

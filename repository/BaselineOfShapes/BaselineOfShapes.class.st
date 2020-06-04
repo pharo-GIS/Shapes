@@ -6,6 +6,7 @@ Class {
 
 { #category : #baselines }
 BaselineOfShapes >> baseline: spec [
+	<baseline>
 
 	spec for: #'common' do: [
 		spec blessing: #'baseline'.

@@ -167,14 +167,14 @@ ShapeMap class >> fromFile: aString [
 	
 	| stream instance tail shxStream shxBytes shpFileString |
 
-	stream := (FileStream readOnlyFileNamed: aString) binary.
+	stream := aString asFileReference binaryReadStream.
 	instance := self fromBytes: ([ stream contents ] ensure: [ stream close ]).
 	shpFileString := aString.
 	tail := shpFileString copyFrom: 1 to: shpFileString size - 4.
 	instance label: tail.
 	(tail , '.shx') asFileReference exists 
 		ifFalse: [ self error: 'missing shx file. Proceed to continue without...'. ^ instance ].
-	shxStream := (FileStream readOnlyFileNamed: tail , '.shx') binary.
+	shxStream := (tail , '.shx') asFileReference binaryReadStream.
 	shxBytes := [ shxStream contents ] ensure: [ shxStream close ].
 	instance shxBytes: shxBytes.
 	^ instance

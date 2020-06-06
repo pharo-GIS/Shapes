@@ -14,4 +14,14 @@ Metacello new
 
 # Usage
 
-WiP
+You can try it with your own .shp files or downloading a [sample data set](https://github.com/nvkelso/natural-earth-vector).
+
+```smalltalk
+| urlESRIFilePrefix urlESRIFileShp shpE legend |
+urlESRIFileShp := FileSystem workingDirectory / 'natural-earth-vector/10m_cultural/ne_10m_admin_0_countries.shp'.
+shpE := ShapeEnsemble fromFile: urlESRIFileShp.
+shpE attribute: 'CONTINENT'.
+legend := ColorLegend mapValuesToRandom: shpE valuesOfCurrentAttribute.
+shpE legend: legend.
+shpE displayMorphic
+```

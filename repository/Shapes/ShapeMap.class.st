@@ -161,23 +161,30 @@ ShapeMap class >> fromBytes: aShpBytes [
 ]
 
 { #category : #'instance creation' }
-ShapeMap class >> fromFile: aString [ 
+ShapeMap class >> fromFile: aStringOrFileReference [
 	"create ShapeMap from the bytes read from file aString"
 	" ShapeMap fromFile: 'c:\etarcview\giovanna\navelli_cocullo.shp' "
 	
-	| stream instance tail shxStream shxBytes shpFileString |
+	| stream instance tail fileRef |
 
-	stream := aString asFileReference binaryReadStream.
+	fileRef := aStringOrFileReference asFileReference.
+	stream := fileRef binaryReadStream.
 	instance := self fromBytes: ([ stream contents ] ensure: [ stream close ]).
-	shpFileString := aString.
-	tail := shpFileString copyFrom: 1 to: shpFileString size - 4.
+	tail := fileRef withoutExtension fullName.
 	instance label: tail.
-	(tail , '.shx') asFileReference exists 
-		ifFalse: [ self error: 'missing shx file. Proceed to continue without...'. ^ instance ].
-	shxStream := (tail , '.shx') asFileReference binaryReadStream.
-	shxBytes := [ shxStream contents ] ensure: [ shxStream close ].
-	instance shxBytes: shxBytes.
+	instance shxBytes: (self readSHXBytesFrom: fileRef).
 	^ instance
+]
+
+{ #category : #'instance creation' }
+ShapeMap class >> readSHXBytesFrom: fileRef [
+
+	^ (fileRef withExtension: 'shx') asFileReference exists 
+		ifFalse: [ self error: 'Missing shx file'.  ]
+		ifTrue: [ 
+			| shxStream |
+			shxStream := (fileRef withExtension: 'shx') asFileReference binaryReadStream.
+			[ shxStream contents ] ensure: [ shxStream close ] ].
 ]
 
 { #category : #accessing }
@@ -188,15 +195,17 @@ ShapeMap class >> shapeType [
 ]
 
 { #category : #'instance creation' }
-ShapeMap class >> shapesFromFile: aString [ 
+ShapeMap class >> shapesFromFile: aString [
 	"extract all shapes from file aString"
+
 	"ShapeMap shapesFromFile: 'd:\3D\abr-z.shp' "
+
 	"ShapeMap shapesFromFile: 'c:\etshapes\giabvarkenslbt2001\giabvarkenslbt2001.shp' "
-		
+
 	| inst |
 	inst := self fromFile: aString.
-	inst isNil ifFalse: [^inst shapes].
-	^inst
+	inst ifNotNil: [ ^ inst shapes ].
+	^ inst
 ]
 
 { #category : #'accessing - index' }

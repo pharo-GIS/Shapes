@@ -133,11 +133,18 @@ ShapeEnsemble class >> displayNoLegend2 [
 ]
 
 { #category : #'instance creation' }
-ShapeEnsemble class >> fromFile: aString [ 
+ShapeEnsemble class >> fromFile: aStringOrFileReference [
 	"ShapeEnsemble fromFile: 'c:\esri\esridata\CANADA\province.shp' "
 
-	^self new shape: (ShapeMap fromFile: aString)
-		data: (DBF on: (aString copyFrom: 1 to: aString size - 3) , 'DBF')
+	^ self new 
+		shape: (ShapeMap fromFile: aStringOrFileReference)
+		data: (self readDBFFromFile: aStringOrFileReference)
+]
+
+{ #category : #accessing }
+ShapeEnsemble class >> readDBFFromFile: aFileReference [ 
+
+	^ DBF on: (aFileReference withExtension: 'dbf') asFileReference fullName
 ]
 
 { #category : #converting }

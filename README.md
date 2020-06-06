@@ -14,7 +14,42 @@ Metacello new
 
 # Usage
 
-You can try it with your own .shp files or downloading a [sample data set](https://github.com/nvkelso/natural-earth-vector).
+You can try it with your own .shp files or download a [sample data set](https://github.com/nvkelso/natural-earth-vector) from Natural Earth project using the following example:
+
+```smalltalk
+| shpE legend urlRoot urlESRIFilePrefix urlESRIFileShp urlPath response fileRef |
+
+" Download Shapefile resources "
+urlRoot := 'https://github.com/nvkelso/natural-earth-vector/blob/master/110m_cultural/'.
+urlESRIFilePrefix := 'ne_110m_populated_places'.
+urlESRIFileShp := urlESRIFilePrefix , '.shp'.
+urlPath := urlRoot , urlESRIFilePrefix.
+
+#('.shx' '.dbf' '.shp' '.cpg' '.prj') do: [ : ext |
+  ZnClient new
+   url: (urlPath , ext) asZnUrl;
+   queryAt: 'raw' put: 'true';
+   numberOfRetries: 2;
+   enforceHttpSuccess: true;
+   downloadTo: urlESRIFilePrefix , ext;
+   get ].
+
+" Load and display it in Morphic "
+shpE := ShapeEnsemble fromFile: urlESRIFileShp.
+" List data fields "
+shpE dataFields inspect.
+" List all shape records "
+shpE shapeRecords inspect.
+" Set the current attribute "
+shpE attribute: 'NAME'.
+
+legend := ColorLegend mapValuesToRandom: shpE valuesOfCurrentAttribute.
+shpE legend: legend.
+
+shpE displayMorphic.
+```
+
+If you already downloaded the files in your Pharo working directory:
 
 ```smalltalk
 | urlESRIFilePrefix urlESRIFileShp shpE legend |

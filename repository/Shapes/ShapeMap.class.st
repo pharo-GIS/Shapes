@@ -314,12 +314,12 @@ ShapeMap >> copyToFile: newName [
 	| aString stream aString2 stream2 dbfBytes aString3 stream3 |
 
 	aString := (FileSystem disk / newName) fullName , '.shp'.
-	stream := (FileStream newFileNamed: aString) binary.
-	[stream next: shpBytes basicSize putAll: shpBytes] ensure: [stream close].
+	stream := aString asFileReference binary.
+	[ stream next: shpBytes basicSize putAll: shpBytes ] ensure: [stream close].
 
 	aString2 := (FileSystem disk / newName) fullName , '.shx'.
-	stream2 := (FileStream newFileNamed: aString2) binary.
-	[stream2 next: shxBytes basicSize putAll: shxBytes] 
+	stream2 :=  aString2 asFileReference binary.
+	[ stream2 next: shxBytes basicSize putAll: shxBytes ] 
 		ensure: [stream2 close].
 
 	Smalltalk at: #XBaseFile ifAbsent: [ ^ self ].
@@ -327,8 +327,8 @@ ShapeMap >> copyToFile: newName [
 		ifFalse: [ ^ self writeMiniMinimalDBF: newName , '.dbf' ]. "create a minimal dbf"
 	dbfBytes := XBaseFile dbfBytesFrom: label , '.dbf'.	"the bytes are read into memory, and directly written to the newName.dbf file"
 	aString3 := (FileSystem disk / newName) fullName , '.dbf'.
-	stream3 := (FileStream newFileNamed: aString3) binary.
-	[stream3 next: dbfBytes basicSize putAll: dbfBytes] 
+	stream3 := aString3 asFileReference binary.
+	[ stream3 next: dbfBytes basicSize putAll: dbfBytes ] 
 		ensure: [stream3 close]
 ]
 
@@ -343,7 +343,7 @@ ShapeMap >> copyToFileInDir: aDirString [
 	| newName dir fullName |
 	newName := UIManager default request: 'New File Name?' translated initialAnswer: 'test'.
 	dir := FileSystem disk / aDirString.
-	fullName := dir pathName , DiskStore delimiter asString , newName.
+	fullName := dir asFileReference / newName.
 	self copyToFile: fullName
 ]
 
@@ -1009,14 +1009,13 @@ ShapeMap >> writeMiniMinimalDBF: aString [
 	| fields writeBlock xbase |
 	fields := OrderedCollection new.
 	fields addLast: #('ID' $N 8 0 nil).
-	writeBlock := 
-			[xbase := XBaseFile on: aString fields: fields.
-			1 to: self numberOfShapes
-				do: 
-					[:i | 
-					xbase append.
-					xbase atField: 1 put: i]].
-	writeBlock ensure: [xbase close]
+	writeBlock := [ 
+		xbase := XBaseFile on: aString fields: fields.
+		1 to: self numberOfShapes
+			do: [ : i | 
+				xbase append.
+				xbase atField: 1 put: i ] ].
+	writeBlock ensure: [ xbase close ]
 ]
 
 { #category : #'accessing - header' }

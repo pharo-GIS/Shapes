@@ -182,7 +182,7 @@ ShapeViewerMorph >> drawOn: aCanvas [
 			self invalidateCache. 
 			image := Form extent: self innerBounds extent depth: Display depth.
 			image fillWhite.
-			canvas := BalloonCanvas on: image.
+			canvas := FormCanvas on: image.
 			submorphs 
 				reverseDo: [:each | each isVectorMapMorph ifTrue: [each drawOn: canvas]].
 			"the reverseDo: is there only because thats the default order"

@@ -314,11 +314,11 @@ ShapeMap >> copyToFile: newName [
 	| aString stream aString2 stream2 dbfBytes aString3 stream3 |
 
 	aString := (FileSystem disk / newName) fullName , '.shp'.
-	stream := (FileStream newFileNamed: aString) binary.
+	stream := aString asFileReference binary.
 	[stream next: shpBytes basicSize putAll: shpBytes] ensure: [stream close].
 
 	aString2 := (FileSystem disk / newName) fullName , '.shx'.
-	stream2 := (FileStream newFileNamed: aString2) binary.
+	stream2 := aString2 asFileReference  binary.
 	[stream2 next: shxBytes basicSize putAll: shxBytes] 
 		ensure: [stream2 close].
 
@@ -327,7 +327,7 @@ ShapeMap >> copyToFile: newName [
 		ifFalse: [ ^ self writeMiniMinimalDBF: newName , '.dbf' ]. "create a minimal dbf"
 	dbfBytes := XBaseFile dbfBytesFrom: label , '.dbf'.	"the bytes are read into memory, and directly written to the newName.dbf file"
 	aString3 := (FileSystem disk / newName) fullName , '.dbf'.
-	stream3 := (FileStream newFileNamed: aString3) binary.
+	stream3 := aString3 asFileReference  binary.
 	[stream3 next: dbfBytes basicSize putAll: dbfBytes] 
 		ensure: [stream3 close]
 ]
@@ -343,7 +343,7 @@ ShapeMap >> copyToFileInDir: aDirString [
 	| newName dir fullName |
 	newName := UIManager default request: 'New File Name?' translated initialAnswer: 'test'.
 	dir := FileSystem disk / aDirString.
-	fullName := dir pathName , DiskStore delimiter asString , newName.
+	fullName := dir asFileReference / newName.
 	self copyToFile: fullName
 ]
 
@@ -357,7 +357,7 @@ ShapeMap >> copyToFileInDir: aDirString dbf: aDBF [
 	| newName dir fullName |
 	newName := UIManager default request: 'New File Name?' translated initialAnswer: 'test'.
 	dir := FileSystem disk / aDirString.
-	fullName := dir pathName , DiskStore delimiter asString , newName.
+	fullName := dir asFileReference / newName.
 	self copyToFileNoDBF: fullName.
 
 	aDBF dbfBytesToFile: fullName , '.dbf'
@@ -386,12 +386,12 @@ ShapeMap >> copyToFileNoDBF: newName [
 	| aString stream aString2 stream2 |
 
 	aString :=  newName asFileReference fullName , '.shp'. 
-	stream := (FileStream newFileNamed: aString) binary.
+	stream := aString asFileReference binary.
 	[ stream next: shpBytes basicSize putAll: shpBytes ]
 						ensure: [ stream close ].
 
 	aString2 :=  newName asFileReference fullName , '.shx'. 
-	stream2 := (FileStream newFileNamed: aString2) binary.
+	stream2 := aString2 asFileReference  binary.
 	[ stream2 next: shxBytes basicSize putAll: shxBytes ]
 						ensure: [ stream2 close ]
 ]
@@ -428,10 +428,10 @@ ShapeMap >> drawForm [
 { #category : #displaying }
 ShapeMap >> drawOn: aCanvas [ 
 	"draw the shape in default colors (no legend using information from the dbf is required)"
-	| canvas geoBB scaling m multiplier xMin yMax rect polygonColor arcColor pointColor |
+	| canvasEngine geoBB scaling m multiplier xMin yMax rect polygonColor arcColor pointColor |
 
-	canvas := aCanvas asBalloonCanvas.
-	canvas aaLevel: 4.
+	canvasEngine := aCanvas ensuredEngine.
+	canvasEngine aaLevel: 4.
 
 	"boundingBox & scale"
 	geoBB := self boundingBox.
@@ -443,7 +443,7 @@ ShapeMap >> drawOn: aCanvas [
 	"legend isNil ifFalse: [colors := legend colorForAll: (data collect: [:each | each at: coloringAttrIndex ]) ]. "
 
 	polygonColor := self polygonColor.
-	polygonColor isNil ifFalse: [polygonColor := polygonColor alpha: 0.5].
+	polygonColor isNil ifFalse: [ polygonColor := polygonColor alpha: 0.5 ].
 	arcColor := self arcColor.
 	pointColor := self pointColor.
 
@@ -459,7 +459,7 @@ ShapeMap >> drawOn: aCanvas [
 		ifFalse: [multiplier := 1.0.
 			m := MatrixTransform2x3 withScale: 1 @ -1 * scaling].
 	m offset: xMin negated @ yMax * scaling.
-	canvas transformBy: m.
+	aCanvas transformBy: m.
 	"finally, the drawing-on-canvas code; slightly different depending on shapeMap type"
 	self hasPolygons
 		ifTrue: [1
@@ -472,7 +472,7 @@ ShapeMap >> drawOn: aCanvas [
 										collect: [:each | each
 												collect: [:point | point * multiplier]]].
 					(colors isNil or: [colors isEmpty]) ifFalse: [polygonColor := colors at: i].
-					canvas
+					aCanvas
 						drawGeneralPolygon: contours
 						color: polygonColor
 						borderWidth: 1
@@ -489,15 +489,15 @@ ShapeMap >> drawOn: aCanvas [
 										collect: [:each | each
 												collect: [:point | point * multiplier]]].
 					colors isNil ifFalse: [arcColor := colors at: i].
-					canvas
+					aCanvas
 						drawGeneralPolygon: contours
 						color: nil
 						borderWidth: 1
 						borderColor: arcColor]].
 	"+++++++++++ point shapes ++++++++++++++++++++++++"
 	self hasPoints
-		ifTrue: [rect := (Rectangle origin: -1.0 @ -1.0 corner: 1.0 @ 1.0)
-						scaleBy: (10 raisedToInteger: (1.0 / (scaling / multiplier) max: 1.0) log truncated).
+		ifTrue: [
+			rect := (Rectangle origin: -1.0 @ -1.0 corner: 1.0 @ 1.0) scaleBy: (10 raisedToInteger: (1.0 / (scaling / multiplier) max: 1.0) log truncated).
 			self hasMultiPoints
 				ifTrue: [1
 						to: self numberOfShapes
@@ -506,14 +506,14 @@ ShapeMap >> drawOn: aCanvas [
 							points := self multiPointsFromShapeIndex: i.
 							colors isNil ifFalse: [pointColor := colors at: i].
 							scaling > 1.0
-								ifTrue: [points := points
-												collect: [:each | each * multiplier].
-									points
-										do: [:point | canvas
-												drawRectangle: (rect translateBy: point)
-												color: pointColor
-												borderWidth: 0
-												borderColor: nil]]]]
+								ifTrue: [
+									points := points collect: [:each | each * multiplier ].
+									points do: [:point | 
+										aCanvas
+											drawRectangle: (rect translateBy: point)
+											color: pointColor
+											borderWidth: 0
+											borderColor: nil]]]]
 				ifFalse: [1
 						to: self numberOfShapes
 						do: [:i | 
@@ -522,7 +522,7 @@ ShapeMap >> drawOn: aCanvas [
 							scaling > 1.0
 								ifTrue: [point := point * multiplier].
 							colors isNil ifFalse: [pointColor := colors at: i].
-							canvas
+							aCanvas
 								drawRectangle: (rect translateBy: point)
 								color: pointColor
 								borderWidth: 0

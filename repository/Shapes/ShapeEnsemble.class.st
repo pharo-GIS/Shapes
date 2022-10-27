@@ -144,7 +144,7 @@ ShapeEnsemble class >> fromFile: aStringOrFileReference [
 { #category : #accessing }
 ShapeEnsemble class >> readDBFFromFile: aFileReference [ 
 
-	^ DBF on: (aFileReference withExtension: 'dbf') asFileReference fullName
+	^ DBF on: (aFileReference asFileReference withExtension: 'dbf') asFileReference fullName
 ]
 
 { #category : #converting }
@@ -156,7 +156,7 @@ ShapeEnsemble >> asForm [
 	form fillWhite.
 	self setColorsFromLegend.
 	shape drawOn: (BalloonCanvas on: form).
-	^form
+	^ form
 ]
 
 { #category : #accessing }

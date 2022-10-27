@@ -64,7 +64,7 @@ MultiPointShape >> asFormExtent: aPoint depth: anInteger geoBoundingBox: aRect s
 	form := Form extent: aPoint depth: anInteger.
 	pointColor := self pointColor.
 	form fillColor: self backgroundColor.
-	canvas := BalloonCanvas on: form.
+	canvas := (BalloonCanvas on: form) ensuredEngine.
 	canvas aaLevel: 0.
 	"points stand out better without anti-aliasing"
 	geoBB := aRect.

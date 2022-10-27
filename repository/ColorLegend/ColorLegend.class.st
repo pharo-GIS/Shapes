@@ -504,7 +504,7 @@ ColorLegend >> expression: aString [
 	"install a code-block that will lookup the color in the source, using expression aString to obtain the value that is send to the color source"
 	"aString is something like: 'x areaHa', or: '((x max: 0.0001) log) "
 
-	self block: (Compiler evaluate: '[:x :src | src colorFor: ' , aString , ']')
+	self block: (self evaluate: '[:x :src | src colorFor: ' , aString , ']')
 
 ]
 

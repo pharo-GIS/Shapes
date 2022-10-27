@@ -1009,14 +1009,13 @@ ShapeMap >> writeMiniMinimalDBF: aString [
 	| fields writeBlock xbase |
 	fields := OrderedCollection new.
 	fields addLast: #('ID' $N 8 0 nil).
-	writeBlock := 
-			[xbase := XBaseFile on: aString fields: fields.
-			1 to: self numberOfShapes
-				do: 
-					[:i | 
-					xbase append.
-					xbase atField: 1 put: i]].
-	writeBlock ensure: [xbase close]
+	writeBlock := [ 
+		xbase := XBaseFile on: aString fields: fields.
+		1 to: self numberOfShapes
+			do: [ : i | 
+				xbase append.
+				xbase atField: 1 put: i ] ].
+	writeBlock ensure: [ xbase close ]
 ]
 
 { #category : #'accessing - header' }

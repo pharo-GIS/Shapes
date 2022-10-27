@@ -158,7 +158,7 @@ ShapeMorph >> asForm [
 	| form |
 	form := Form extent: self extent depth: Display depth.
 	form fillWhite.
-	self drawIsolatedOn: (BalloonCanvas on: form).
+	self drawIsolatedOn: (FormCanvas on: form).
 	^ form
 ]
 
@@ -253,7 +253,7 @@ ShapeMorph >> drawEmbeddedOn: aCanvas [
 
 	| canvas scaling m multiplier rect setting |
 	viewer needsDrawing ifFalse: [^self].
-	canvas := BalloonCanvas on: viewer image.
+	canvas := FormCanvas on: viewer image.
 	"although aCanvas is a BalloonCanvas, the following will not work (transparency is lost somehow):
 	canvas _ aCanvas asBalloonCanvas."
 	setting := viewer viewSetting.	"obtain settings for projection from the gis"

@@ -5,11 +5,12 @@ Smalltalk package to read and view GIS data in ESRI Shapefile format, [originall
 # Installation
 
 ```smalltalk
-Metacello new
-	onWarningLog;
-	repository: 'github://pharo-GIS/Shapes/repository';
-	baseline: 'Shapes';
-	load
+EpMonitor disableDuring: [ 
+    Metacello new
+        onWarningLog;
+        repository: 'github://pharo-GIS/Shapes/repository';
+        baseline: 'Shapes';
+        load ].
 ```
 
 # Usage

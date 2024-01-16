@@ -15,13 +15,13 @@ EpMonitor disableDuring: [
 
 # Usage
 
-You can try it with your own .shp files or download a [sample data set](https://github.com/nvkelso/natural-earth-vector) from Natural Earth project using the following example:
+You can try it with your own .shp files or download a [sample data set](https://github.com/nvkelso/natural-earth-vector/tree/v5.1.1/) from Natural Earth project using the following example:
 
 ```smalltalk
 | shpE legend urlRoot urlESRIFilePrefix urlESRIFileShp urlPath response fileRef |
 
 " Download Shapefile resources "
-urlRoot := 'https://github.com/nvkelso/natural-earth-vector/blob/master/110m_cultural/'.
+urlRoot := 'https://github.com/nvkelso/natural-earth-vector/tree/v5.1.1/110m_cultural/'.
 urlESRIFilePrefix := 'ne_110m_populated_places'.
 urlESRIFileShp := urlESRIFilePrefix , '.shp'.
 urlPath := urlRoot , urlESRIFilePrefix.
